@@ -1,0 +1,24 @@
+{
+  "name": "create-video-thumbnails",
+  "version": "0.1.0",
+  "description": "Create video thumbnails by <video> and OffscreenCanvas.",
+  "main": "index.mjs",
+  "type": "module",
+  "module": "index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "scripts": {
+    "test": "echo 42"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zunsthy/create-video-thumbnails.git"
+  },
+  "author": "ZunSThy <zunsthy@gmail.com>",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/zunsthy/create-video-thumbnails/issues"
+  },
+  "homepage": "https://github.com/zunsthy/create-video-thumbnails#readme"
+}

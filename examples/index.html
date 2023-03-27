@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header>
+    <form name="form">
+      <label for="select_file">Select Video File:</label>
+      <input id="select_file" name="select_file" type="file" accept="video/*">
+    </form>
+  </header>
+
+  <main>
+    <video
+      class="video"
+      muted
+      controls
+      controlsList="nodownload nofullscreen noremoteplayback"
+    ></video>
+    <div class="thumbs"></div>
+  </main>
+
+  <footer>
+    <span class="info"></span>
+  </footer>
+
+  <script type="module">
+import { createVideoThumbnails } from '../index.mjs';
+
+const start = () => {
+  const input = document.querySelector('input[name="select_file"]');
+  const video = document.querySelector('.video');
+  const thumbs = document.querySelector('.thumbs');
+
+  const displayResult = (result) => {
+    Promise.all(
+      result.map((item) => new Promise((resolve) => {
+        const a = document.createElement('a');
+        a.classList.add('loc');
+        a.addEventListener('click', () => {
+          video.currentTime = item.time;
+        });
+        const img = document.createElement('img');
+        img.classList.add('thumb');
+        const load = () => {
+          img.removeEventListener('load', load);
+          resolve();
+        };
+        img.addEventListener('load', load);
+        a.appendChild(img);
+        img.src = item.url;
+        thumbs.append(a);
+      })),
+    ).then(() => {
+      result.destory();
+    })
+  };
+
+  input.addEventListener('change', (ev) => {
+    const file = ev.currentTarget.files[0];
+    if (file) {
+      thumbs.textContent = '';
+      const url = URL.createObjectURL(file);
+
+      const vt = createVideoThumbnails(url, { width: 100 });
+      console.log('load video and create thumbnails');
+      console.time('loaded');
+      vt.make(10, (result) => {
+        console.timeEnd('loaded');
+        displayResult(result);
+        vt.destory();
+
+        video.width = 720;
+        const init = () => {
+          video.height = video.width / video.videoWidth * video.videoHeight;
+          video.removeEventListener('loadedmetadata', init);
+        };
+        video.addEventListener('loadedmetadata', init);
+        video.src = url;
+      });
+    }
+  })
+};
+
+start();
+  </script>
+</body>
+</html>

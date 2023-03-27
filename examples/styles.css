@@ -1,0 +1,24 @@
+header, main {
+  width: 720px;
+  margin-bottom: 2em;
+}
+
+.video {
+  display: block;
+}
+
+.thumbs {
+  display: flex;
+}
+
+.loc {
+  display: block;
+  cursor: pointer;
+}
+
+.thumb {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
