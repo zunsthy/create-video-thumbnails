@@ -132,4 +132,4 @@ export const createVideoThumbnails = (videoSrc, options = {}) => {
   };
 };
 
-export default VideoThumbnails;
+export default createVideoThumbnails;

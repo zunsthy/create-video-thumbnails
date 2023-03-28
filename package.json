@@ -1,6 +1,6 @@
 {
   "name": "create-video-thumbnails",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Create video thumbnails by <video> and OffscreenCanvas.",
   "main": "index.mjs",
   "type": "module",
