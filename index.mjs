@@ -16,6 +16,17 @@ const scale = (sw, sh, dw, dh) => {
   return { width: ow, height: oh };
 };
 
+const once = (fn) => {
+  let flag = false;
+  let result;
+  return (...args) => {
+    if (flag) {
+      return result;
+    }
+    return result = fn(...args);
+  };
+};
+
 /**
  * Create thumbnails of the video
  * @param {string} videoSrc video source url
@@ -32,6 +43,7 @@ export const createVideoThumbnails = (videoSrc, options = {}) => {
   }
 
   let duration = 0;
+  let hasError = false;
   let loaded = false;
   let destoryed = false;
 
@@ -51,13 +63,20 @@ export const createVideoThumbnails = (videoSrc, options = {}) => {
     duration = video.duration;
     loaded = true;
   };
+  const handleFailed = () => {
+    hasError = true;
+    loaded = true;
+  };
   video.addEventListener('loadedmetadata', handleInit);
+  video.addEventListener('error', handleFailed);
 
   return {
     make: (n, cb) => {
       if (destoryed) {
         return;
       }
+
+      const callback = once(cb);
 
       const result = [];
 
@@ -80,7 +99,7 @@ export const createVideoThumbnails = (videoSrc, options = {}) => {
           seek(current);
         } else {
           end();
-          cb(result);
+          callback(null, result);
         }
       };
 
@@ -106,8 +125,20 @@ export const createVideoThumbnails = (videoSrc, options = {}) => {
         seek(0);
       };
 
+      const handleError = () => {
+        video.removeEventListener('error', handleError);
+        const error = new Error(video.error.message);
+        error.code = video.error.code;
+        callback(error);
+      };
+
       const start = () => {
         video.addEventListener('seeked', handleSeek);
+        if (hasError) {
+          handleError();
+        } else {
+          video.addEventListener('error', handleError);
+        }
         if (loaded) {
           handleLoad();
         } else {

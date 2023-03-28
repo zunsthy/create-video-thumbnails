@@ -65,16 +65,19 @@ const start = () => {
     const file = ev.currentTarget.files[0];
     if (file) {
       thumbs.textContent = '';
+      console.log('File:', file);
       const url = URL.createObjectURL(file);
-
       const vt = createVideoThumbnails(url, { width: 100 });
       console.log('load video and create thumbnails');
       console.time('loaded');
-      vt.make(10, (result) => {
+      vt.make(10, (err, result) => {
         console.timeEnd('loaded');
+        if (err) {
+          console.error(err);
+          return;
+        }
         displayResult(result);
         vt.destory();
-
         video.width = 720;
         const init = () => {
           video.height = video.width / video.videoWidth * video.videoHeight;
